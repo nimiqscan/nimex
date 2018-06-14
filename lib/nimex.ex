@@ -7,32 +7,45 @@ defmodule Nimex do
     ]
   end
 
-  defp call(method, params \\ nil) do
+
+  defp call(method, params \\ nil, retries \\ 3) do
     body =
       Poison.encode!(%{
         jsonrpc: "2.0",
         method: method,
         params: params,
-        id: 1
+        id: 42, 
       })
 
     config = config()
 
-    %{body: body} =
-      HTTPoison.post!(
-        config[:rpc_host],
-        body,
-        [],
-        hackney: [basic_auth: {config[:rpc_username], config[:rpc_password]}]
-      )
+    response = HTTPoison.post(
+      config[:rpc_host],
+      body,
+      [],
+      [
+        follow_redirect: true, max_redirect: 5,
+        hackney: [basic_auth: {config[:rpc_username], config[:rpc_password]},]
+      ]
+    )
 
-    case Poison.decode(body) do
-      {:ok, %{"result" => result}} ->
-        {:ok, result}
+    case response do
+      {:ok, %{body: body}} ->
+        case Poison.decode(body) do
+          {:ok, %{"result" => result}} ->
+            {:ok, result}
 
-      other ->
-        {:error, other, body}
+          other ->
+            {:error, other, body}
+        end
+      {:error, response} ->
+        if retries <= 0 do
+          {:error, response}
+        else
+          call(method, params, retries - 1)
+        end
     end
+
   end
 
   # Network

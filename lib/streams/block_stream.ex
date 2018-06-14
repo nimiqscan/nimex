@@ -1,4 +1,4 @@
-defmodule BlockStream do
+defmodule Nimex.BlockStream do
   def from(start) do
     Stream.resource(
       fn -> start end,

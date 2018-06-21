@@ -35,8 +35,8 @@ defmodule Nimex do
           {:ok, %{"result" => result}} ->
             {:ok, result}
 
-          other ->
-            {:error, other, body}
+          {:error, error} ->
+            {:error, error}
         end
       {:error, response} ->
         if retries <= 0 do

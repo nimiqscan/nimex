@@ -13,6 +13,7 @@ defmodule Nimex.MixProject do
 
   def application do
     [
+      mod: {Nimex.Application, []},
       extra_applications: [:logger]
     ]
   end

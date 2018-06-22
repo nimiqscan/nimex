@@ -6,8 +6,17 @@ defmodule Nimex.Reward do
   @emission_tail_start 48692960
   @emission_tail_reward 4000
   
+  def start_link() do
+    Agent.start_link(fn -> %{} end, name: __MODULE__)
+  end
+
   def supply_after(block_height) do
-    get_supply_after(@initial_supply, block_height)
+    case Agent.get(__MODULE__, &Map.get(&1, block_height)) do
+      nil ->
+        get_supply_after(@initial_supply, block_height)
+      supply ->
+        supply
+    end
   end
 
   def reward_at(block_height) do
@@ -17,9 +26,11 @@ defmodule Nimex.Reward do
 
   defp get_supply_after(initial_supply, block_height, start_height \\ 0) do
     (start_height .. block_height)
-    |> Enum.reduce(initial_supply, fn height, supply ->
-      reward = get_reward_at(supply, height)
-      supply + reward
+    |> Enum.reduce(initial_supply, fn block_height, supply ->
+      reward = get_reward_at(supply, block_height)
+      supply = supply + reward
+      Agent.update(__MODULE__, &Map.put(&1, block_height, supply))
+      supply
     end)
   end
 

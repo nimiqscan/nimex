@@ -21,7 +21,8 @@ defmodule Nimex.MixProject do
   defp deps do
     [
       {:httpoison, "~> 1.0"},
-      {:poison, "~> 3.1"}
+      {:poison, "~> 3.1"},
+      {:custom_base, "~> 0.2"}
     ]
   end
 end

@@ -37,7 +37,7 @@ defmodule Nimex.Reward do
   defp get_reward_at(_, 0), do: 0
   defp get_reward_at(current_supply, block_height) do
     remaining = @total_supply - current_supply
-    is_tail = block_height >= @emission_tail_start and remaining >= @emission_tail_reward
+    is_tail = block_height >= @emission_tail_start and remaining >= @emission_tail_rewardm
     case is_tail do
       true -> @emission_tail_reward
       false ->

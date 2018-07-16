@@ -1,7 +1,8 @@
 defmodule Nimex.Address do
   def from_string(str) do
-    str
+    {:ok, res} = str
     |> String.replace(" ", "")
-    |> Base.decode64!
+    |> NimiqBase32.decode
+    << res::size(160) >>
   end
 end

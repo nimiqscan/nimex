@@ -32,6 +32,8 @@ defmodule Nimex.Address do
   def to_user_friendly_addr(binary_addr) do
     << int::size(160) >> = binary_addr
     base32 = NimiqBase32.encode(int)
+    base32 = "00000000000000000000000000000000" <> base32
+    base32 = String.slice(base32, String.length(base32) - 32, 32)
 
     check = "00" <> to_string(98 - iban_check(base32 <> @address_prefix <> "00"))
     check = String.slice(check, String.length(check) - 2, 2)

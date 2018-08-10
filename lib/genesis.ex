@@ -744,7 +744,7 @@ defmodule Nimex.Genesis do
     |> Base.decode64!
 
     << _num_accounts::size(16), data::binary >> = data
-    accounts = parse_accounts(data)
+    parse_accounts(data)
   end
 
   def parse_accounts(<<>>), do: []
@@ -773,11 +773,9 @@ defmodule Nimex.Genesis do
             << hash_root::size(64), data::binary >> = data
             {hash_root, data}
         end
-        << hash_count::size(8), timeout::size(32), total_amount::size(64), data::binary >> = data
+        << _hash_count::size(8), timeout::size(32), total_amount::size(64), data::binary >> = data
         {%{balance: balance, sender: sender, recipient: recipient, hash_algorithm: hash_algorithm, hash_root: hash_root, timeout: timeout, total_amount: total_amount}, data}
     end
     [{<< addr::size(160) >>, account}] ++ parse_accounts(data)
   end
 end
-
-#Nimex.Genesis.all_accounts() |> Enum.map(fn {x, y} -> {x, y.balance} end) |> Enum.sort(fn {x, y}, {x2, y2} -> y > y2 end)

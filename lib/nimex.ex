@@ -34,7 +34,8 @@ defmodule Nimex do
         case Poison.decode(body) do
           {:ok, %{"result" => result}} ->
             {:ok, result}
-
+          {:ok, %{"error" => error}} ->
+            {:error, error}
           {:error, error} ->
             {:error, error}
         end
